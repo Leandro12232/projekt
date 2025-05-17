@@ -1,9 +1,9 @@
 package Projekt;
 
-public class Student extends Mensch {
+/*public class Student extends Mensch {
     private int Matrikelnummer;
 
-    public Student(String name, int datum, int matrikelnummer) {
+    public Student(String name, int datum) {
         super(name, datum);
         Matrikelnummer = matrikelnummer;
     }
@@ -15,5 +15,5 @@ public class Student extends Mensch {
     public void setMatrikelnummer(int matrikelnummer) {
         Matrikelnummer = matrikelnummer;
     }
-}
+}*/
 

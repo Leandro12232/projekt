@@ -4,11 +4,11 @@ import java.util.*;
 
 public class ProjektMap<K, V> implements Map<K, V> {
     private List<K> keys;
-    private List<V> value;
+    private List<V> values;
 
     public ProjektMap() {
         keys = new ArrayList<>();
-        value = new ArrayList<>();
+        values = new ArrayList<>();
     }
 
     /**
@@ -20,7 +20,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public int size() {
-        return 0;
+        return keys.size();
     }
 
     /**
@@ -30,7 +30,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return keys.isEmpty();
     }
 
     /**
@@ -50,7 +50,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        return keys.contains(key);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        return values().contains(value);
     }
 
     /**
@@ -100,6 +100,10 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public V get(Object key) {
+        int index = keys.indexOf(key);
+        if (index >= 0) {
+            return values.get(index);
+        }
         return null;
     }
 
@@ -129,8 +133,16 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public V put(K key, V value) {
-        return null;
+        int index = keys.indexOf(key);
+        if (index >= 0) {
+            return values.set(index, value); // Ersetze alten Wert
+        } else {
+            keys.add(key);
+            values.add(value);
+            return null;
+        }
     }
+
 
     /**
      * Removes the mapping for a key from this map if it is present
@@ -162,8 +174,14 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public V remove(Object key) {
+        int index = keys.indexOf(key);
+        if (index >= 0) {
+            keys.remove(index);
+            return values.remove(index);
+        }
         return null;
     }
+
 
     /**
      * Copies all of the mappings from the specified map to this map
@@ -188,7 +206,9 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-
+        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
@@ -200,7 +220,8 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public void clear() {
-
+        keys.clear();
+        values.clear();
     }
 
     /**
@@ -220,7 +241,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        return Set.of();
+        return new HashSet<>(keys);
     }
 
     /**
@@ -240,7 +261,7 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public Collection<V> values() {
-        return List.of();
+        return new ArrayList<>(values);
     }
 
     /**
@@ -261,6 +282,12 @@ public class ProjektMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return Set.of();
+        Set<Entry<K, V>> entries = new HashSet<>();
+        for (int i = 0; i < keys.size(); i++) {
+            final K k = keys.get(i);
+            final V v = values.get(i);
+            entries.add(new AbstractMap.SimpleEntry<>(k, v));
+        }
+        return entries;
     }
 }
