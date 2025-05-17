@@ -2,13 +2,13 @@ package Projekt;
 
 import java.util.*;
 
-public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
-    private List<String> keys;
-    private List<Projekt> Projekt;
+public class ProjektMap<K, V> implements Map<K, V> {
+    private List<K> keys;
+    private List<V> value;
 
     public ProjektMap() {
         keys = new ArrayList<>();
-        Projekt = new ArrayList<>();
+        value = new ArrayList<>();
     }
 
     /**
@@ -99,7 +99,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      *                              does not permit null keys ({@linkplain Collection##optional-restrictions optional})
      */
     @Override
-    public Projekt get(Object key) {
+    public V get(Object key) {
         return null;
     }
 
@@ -128,7 +128,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      *                                       or value prevents it from being stored in this map
      */
     @Override
-    public Projekt put(String key, Projekt value) {
+    public V put(K key, V value) {
         return null;
     }
 
@@ -161,7 +161,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      *                                       map does not permit null keys ({@linkplain Collection##optional-restrictions optional})
      */
     @Override
-    public Projekt remove(Object key) {
+    public V remove(Object key) {
         return null;
     }
 
@@ -187,7 +187,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      *                                       the specified map prevents it from being stored in this map
      */
     @Override
-    public void putAll(Map<? extends String, ? extends Projekt> m) {
+    public void putAll(Map<? extends K, ? extends V> m) {
 
     }
 
@@ -219,7 +219,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      * @return a set view of the keys contained in this map
      */
     @Override
-    public Set<String> keySet() {
+    public Set<K> keySet() {
         return Set.of();
     }
 
@@ -239,7 +239,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      * @return a collection view of the values contained in this map
      */
     @Override
-    public Collection<Projekt> values() {
+    public Collection<V> values() {
         return List.of();
     }
 
@@ -260,7 +260,7 @@ public class ProjektMap<String, Projekt> implements Map<String, Projekt> {
      * @return a set view of the mappings contained in this map
      */
     @Override
-    public Set<Entry<String, Projekt>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         return Set.of();
     }
 }
