@@ -1,6 +1,6 @@
 package Projekt;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Projektverwaltung {
     private ProjektMap<String, Projekt> projektMap;
@@ -9,8 +9,8 @@ public class Projektverwaltung {
         projektMap = new ProjektMap<String, Projekt>();
     }
 
-    public void Projekthinzufuegen(String name, int note, int abgabedatum){
-        Projekt projekt = new Projekt(name, note, abgabedatum);
+    public void Projekthinzufuegen(String name, int note, int abgabedatum, List<Student> schuelerliste){
+        Projekt projekt = new Projekt(name, note, abgabedatum, schuelerliste);
 
         projektMap.put(name, projekt);
 
@@ -30,6 +30,10 @@ public class Projektverwaltung {
         System.out.println(projektMap.containsKey(name));
 
 
+    }
+
+    public void NoteSortieren(int note){
+        
     }
 
 }
