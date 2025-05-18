@@ -11,6 +11,7 @@ public class Main {
         projekt.Projekthinzufuegen("Leandr", 1, 20040511, List.of(new Student("Hans", 20041005, 122345), new Student("Peter",20070213, 690677)) );
 
         projekt.ProjektlisteAnzeigen();
+        projekt.NamenSuche();
 
 
     }
