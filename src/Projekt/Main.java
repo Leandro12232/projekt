@@ -12,6 +12,10 @@ public class Main {
 
         projekt.ProjektlisteAnzeigen();
         projekt.NamenSuche();
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            GUIProjektVerwaltung gui = new GUIProjektVerwaltung();
+            gui.setVisible(true);
+        });
 
 
     }
