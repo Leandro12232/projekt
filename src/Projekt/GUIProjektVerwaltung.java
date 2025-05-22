@@ -17,6 +17,8 @@ public class GUIProjektVerwaltung extends JFrame {
     private JButton btnLoeschen;
     private JButton btnNameSortieren;
     private JButton btnNoteSortieren;
+    private JButton btnProjektSuchen;
+    private JButton btnNoteSuchen;
     private JTable table;
     private DefaultTableModel tableModel;
     private JButton btnProjekt;
@@ -52,6 +54,12 @@ public class GUIProjektVerwaltung extends JFrame {
         btnNoteSortieren = new JButton("Nach Note Sortieren");
         inputpanel.add(btnNoteSortieren);
 
+        btnProjektSuchen = new JButton("Projekt suchen");
+        inputpanel.add(btnProjektSuchen);
+
+        btnNoteSuchen = new JButton("Note suchen");
+        inputpanel.add(btnNoteSuchen);
+
         add(inputpanel, BorderLayout.NORTH);
 
         tableModel = new DefaultTableModel(new Object[]{"Projektname", "Note", "Abgabedatum", "Student"}, 0);
@@ -69,6 +77,8 @@ public class GUIProjektVerwaltung extends JFrame {
         btnAnzeigen.addActionListener(e -> anzeigen());
         btnNameSortieren.addActionListener(e -> namesortieren());
         btnNoteSortieren.addActionListener(e -> notesortieren());
+        btnProjektSuchen.addActionListener(e -> projektsuchen());
+        btnNoteSuchen.addActionListener(e -> notesuchen());
 
     }
 
@@ -122,18 +132,18 @@ public class GUIProjektVerwaltung extends JFrame {
     }
 
     private void namesortieren(){
-        ArrayList<Projekt> sortierteListe = projektVerwaltung.NameSortieren();
+        ArrayList<Projekt> sortierteListeName = projektVerwaltung.NameSortieren();
         tableModel.setRowCount(0);
-        for (Projekt p : sortierteListe) {
+        for (Projekt p : sortierteListeName) {
             ausgabeTabelle(p);
         }
         JOptionPane.showMessageDialog(this,"Nach Name sortiert");
     }
 
     private void notesortieren(){
-        ArrayList<Projekt> sortierteListe = projektVerwaltung.NoteSortieren();
+        ArrayList<Projekt> sortierteListeNote = projektVerwaltung.NoteSortieren();
         tableModel.setRowCount(0);
-        for (Projekt p : sortierteListe) {
+        for (Projekt p : sortierteListeNote) {
             ausgabeTabelle(p);
         }
         JOptionPane.showMessageDialog(this,"Nach Note sortiert");
@@ -149,6 +159,24 @@ public class GUIProjektVerwaltung extends JFrame {
             }
         }
         tableModel.addRow(new Object[]{p.getProjektname(), p.getNote(), p.getAbgabedatum(), studenten.toString()});
+    }
+
+    private void projektsuchen(){
+        String Ziel = JOptionPane.showInputDialog("Projektname:");
+        ArrayList<Projekt> suchListe = projektVerwaltung.NamenSuche(Ziel);
+        tableModel.setRowCount(0);
+        if (suchListe.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Kein Projekt mit diesem Namen gefunden.");
+            return;
+        }
+        for (Projekt p : suchListe) {
+            ausgabeTabelle(p);
+        }
+        JOptionPane.showMessageDialog(this,"Gewünschte Namen");
+    }
+
+    private void notesuchen(){
+
     }
 
     private void anzeigen(){

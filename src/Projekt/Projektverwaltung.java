@@ -62,22 +62,22 @@ public class Projektverwaltung {
         return -1;
     }*/
 
-    public void NamenSuche(){
-        List<String> keyListe = new ArrayList<>(projektMap.keySet());
-        System.out.print("Nach welchem Projekt soll gesucht werden: ");
-        String ziel = scanner.next();
-        int index = linearSearch(keyListe, ziel);
+    public ArrayList<Projekt> NamenSuche(String Ziel){
+        ArrayList<Projekt> namenListe = new ArrayList<>(projektMap.values());
+        ArrayList<Projekt> result = new ArrayList<>();
+        int index = linearSearch(namenListe, Ziel);
         if (index >= 0) {
-            System.out.println("Dies ist dein Projekt: " + projektMap.get(ziel));
-        } else {
-            System.out.println("Kein Projekt unter diesem Namen gefunden");
+            result.add(namenListe.get(index));
         }
-    }
+            return result;
+        }
 
-    public static int linearSearch(List liste,String ziel) {
+
+    public static int linearSearch(ArrayList<Projekt> liste,String ziel) {
         for (int i = 0; i < liste.size(); i++) {
-            if (liste.get(i).equals(ziel)) {
+            if (liste.get(i).getProjektname().equals(ziel)) {
                 return i;
+
             }
         }
         return -1;
