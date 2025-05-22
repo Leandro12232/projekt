@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Projektverwaltung p = new Projektverwaltung();
+       /* Projektverwaltung p = new Projektverwaltung();
         ArrayList<Student> studentenliste = new ArrayList<>();
         Student s1 = new Student("L",20241213,1234567);
         studentenliste.add(s1);
@@ -13,12 +13,12 @@ public class Main {
         p.Projekthinzufuegen("C",1,20241012,studentenliste);
         p.Projekthinzufuegen("A",2,20241012,studentenliste);
         p.NameSortieren();
-        p.NoteSortieren();
+        p.NoteSortieren();*/
 
-       // javax.swing.SwingUtilities.invokeLater(() -> {
-       //     GUIProjektVerwaltung gui = new GUIProjektVerwaltung();
-       //     gui.setVisible(true);
-       // });
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            GUIProjektVerwaltung gui = new GUIProjektVerwaltung();
+            gui.setVisible(true);
+        });
 
 
     }

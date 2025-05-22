@@ -83,21 +83,21 @@ public class Projektverwaltung {
         return -1;
     }
 
-    public void NameSortieren(){
-        List<String> keyListe = new ArrayList<>(projektMap.keySet());
-        bubbleSortName(keyListe);
-        System.out.println(keyListe);
+    public ArrayList<Projekt> NameSortieren(){
+        ArrayList<Projekt> projekte = new ArrayList<>(projektMap.values());
+        bubbleSortName(projekte);
+        return projekte;
 
     }
 
-    public static void bubbleSortName(List<String> list) {
+    public static void bubbleSortName(List<Projekt> list) {
         int laenge = list.size();
 
         for (int i = laenge - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
-                if (list.get(j).compareTo(list.get(j + 1)) > 0) {
+                if (list.get(j).getProjektname().compareTo(list.get(j + 1).getProjektname()) > 0) {
                     // Elemente tauschen
-                    String temp = list.get(j);
+                    Projekt temp = list.get(j);
                     list.set(j, list.get(j + 1));
                     list.set(j + 1, temp);
                 }
@@ -105,13 +105,10 @@ public class Projektverwaltung {
         }
     }
 
-    public void NoteSortieren(){
-        List<Projekt> projekte = new ArrayList<>(projektMap.values());
-        bubbleSortNote(projekte); // ✔ richtige Methode
-        System.out.println("Projekte sortiert nach Note:");
-        for (Projekt p : projekte) {
-            System.out.println(p.getProjektname() + " - Note: " + p.getNote());
-        }
+    public ArrayList<Projekt> NoteSortieren(){
+        ArrayList<Projekt> projekte = new ArrayList<>(projektMap.values());
+        bubbleSortNote(projekte);
+        return projekte;
     }
 
     public static void bubbleSortNote(List<Projekt> projekte) {

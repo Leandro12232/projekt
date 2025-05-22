@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class GUIProjektVerwaltung extends JFrame {
 
     private JButton btnLoeschen;
+    private JButton btnNameSortieren;
+    private JButton btnNoteSortieren;
     private JTable table;
     private DefaultTableModel tableModel;
     private JButton btnProjekt;
@@ -24,7 +26,7 @@ public class GUIProjektVerwaltung extends JFrame {
 
 
     public GUIProjektVerwaltung() {
-        setTitle("Projwktverwaltung");
+        setTitle("Projektverwaltung");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -44,6 +46,12 @@ public class GUIProjektVerwaltung extends JFrame {
         btnAnzeigen = new JButton("Anzeigen");
         inputpanel.add(btnAnzeigen);
 
+        btnNameSortieren = new JButton("Nach Name sortieren");
+        inputpanel.add(btnNameSortieren);
+
+        btnNoteSortieren = new JButton("Nach Note Sortieren");
+        inputpanel.add(btnNoteSortieren);
+
         add(inputpanel, BorderLayout.NORTH);
 
         tableModel = new DefaultTableModel(new Object[]{"Projektname", "Note", "Abgabedatum", "Student"}, 0);
@@ -59,6 +67,8 @@ public class GUIProjektVerwaltung extends JFrame {
         //btnLoeschen.addActionListener(e -> schuelerloeschen());
         btnProjekt.addActionListener(e -> projekthinzufuegen());
         btnAnzeigen.addActionListener(e -> anzeigen());
+        btnNameSortieren.addActionListener(e -> namesortieren());
+        btnNoteSortieren.addActionListener(e -> notesortieren());
 
     }
 
@@ -109,6 +119,24 @@ public class GUIProjektVerwaltung extends JFrame {
         } catch (LeereNamenSIndNichtErlaubt | DoppelterName | UngueltigesDatum | UngueltigeNote ex) {
             JOptionPane.showMessageDialog(this,"Fehler"+ex.getMessage());
         }
+    }
+
+    private void namesortieren(){
+        ArrayList<Projekt> sortierteListe = projektVerwaltung.NameSortieren();
+        tableModel.setRowCount(0);
+        for (Projekt p : sortierteListe) {
+            ausgabeTabelle(p);
+        }
+        JOptionPane.showMessageDialog(this,"Nach Name sortiert");
+    }
+
+    private void notesortieren(){
+        ArrayList<Projekt> sortierteListe = projektVerwaltung.NoteSortieren();
+        tableModel.setRowCount(0);
+        for (Projekt p : sortierteListe) {
+            ausgabeTabelle(p);
+        }
+        JOptionPane.showMessageDialog(this,"Nach Note sortiert");
     }
 
 
