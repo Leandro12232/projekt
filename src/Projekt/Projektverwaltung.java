@@ -20,21 +20,12 @@ public class Projektverwaltung {
 
     }
 
-    public void ProjektlisteAnzeigen(){
-        System.out.println(projektMap.keySet());
-
-    }
-
     public ArrayList<Projekt> getAlle(){
         return new ArrayList<>(projektMap.values());
     }
 
-    public void Projektloeschen(String name){
-        projektMap.remove(name);
-        System.out.println(name+" wurde gelöscht");
-        System.out.println(projektMap.containsKey(name));
-
-
+    public void Projektloeschen(String projektname){
+        projektMap.remove(projektname);
     }
 
     public void NoteSuche(int note, List<Student> schuelerliste){

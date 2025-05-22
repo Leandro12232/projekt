@@ -10,18 +10,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 
 public class GUIProjektVerwaltung extends JFrame {
-    ArrayList<Student> schuelerliste = new ArrayList<Student>();
 
     private JButton btnLoeschen;
     private JTable table;
     private DefaultTableModel tableModel;
-    private Projektverwaltung projektVerwaltung;
     private JButton btnProjekt;
     private JButton btnAnzeigen;
+
+    private Projektverwaltung projektVerwaltung;
 
 
     public GUIProjektVerwaltung() {
@@ -38,15 +37,12 @@ public class GUIProjektVerwaltung extends JFrame {
     private void initGui() {
         JPanel inputpanel = new JPanel(new FlowLayout());
 
-        projektVerwaltung = new Projektverwaltung();
 
         btnProjekt = new JButton("Projekt Hinzufügen");
         inputpanel.add(btnProjekt);
 
         btnAnzeigen = new JButton("Anzeigen");
         inputpanel.add(btnAnzeigen);
-
-
 
         add(inputpanel, BorderLayout.NORTH);
 
@@ -90,6 +86,7 @@ public class GUIProjektVerwaltung extends JFrame {
 
             String AnzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
             int anzahl = Integer.parseInt(AnzahlText);
+            //Temporäre Arraylist student
             ArrayList<Student> studentenListe = new ArrayList<>();
 
             for (int i = 0; i < anzahl; i++) {
@@ -126,7 +123,7 @@ public class GUIProjektVerwaltung extends JFrame {
         tableModel.addRow(new Object[]{p.getProjektname(), p.getNote(), p.getAbgabedatum(), studenten.toString()});
     }
 
-   private void anzeigen(){
+    private void anzeigen(){
         tableModel.setRowCount(0);
         for(Projekt p : projektVerwaltung.getAlle()){
             ausgabeTabelle(p);
