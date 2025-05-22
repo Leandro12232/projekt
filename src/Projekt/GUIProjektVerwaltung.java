@@ -176,7 +176,17 @@ public class GUIProjektVerwaltung extends JFrame {
     }
 
     private void notesuchen(){
-
+        Integer Ziel = Integer.valueOf(JOptionPane.showInputDialog("Projektnote:"));
+        ArrayList<Projekt> suchListe = projektVerwaltung.NoteSuche(Ziel);
+        tableModel.setRowCount(0);
+        if (suchListe.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Keine Projekte mit dieser Note gefunden.");
+            return;
+        }
+        for (Projekt p : suchListe) {
+            ausgabeTabelle(p);
+        }
+        JOptionPane.showMessageDialog(this,"Gewünschte Note");
     }
 
     private void anzeigen(){

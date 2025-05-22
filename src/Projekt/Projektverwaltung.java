@@ -28,27 +28,24 @@ public class Projektverwaltung {
         projektMap.remove(projektname);
     }
 
-    public void NoteSuche(int note, List<Student> schuelerliste){
-        System.out.print("Nach welcher Zahl soll gesucht werden? ");
-        int ziel = scanner.nextInt();
-
-
-        int index = 0;//binaereSearch(schuelerliste, ziel);
+    public ArrayList<Projekt> NoteSuche(int Ziel){
+        ArrayList<Projekt> notenListe = new ArrayList<>(projektMap.values());
+        ArrayList<Projekt> result = new ArrayList<>();
+        int index = binaereSearch(notenListe, Ziel);
         if (index >= 0) {
-            System.out.println("Zahl gefunden an Index: " + index);
-        } else {
-            System.out.println("Zahl nicht gefunden.");
+            result.add(notenListe.get(index));
         }
+        return result;
     }
 
 
-   /* public static int binaereSearch(List<int> liste, int ziel) {
+   public static int binaereSearch(ArrayList<Projekt> liste, int ziel) {
         int links = 0;
         int rechts = liste.size() - 1;
 
         while (links <= rechts) {
             int mitte = (links + rechts) / 2;
-            int wert = liste.get(mitte);
+            int wert = liste.get(mitte).getNote();
 
             if (wert == ziel) {
                 return mitte;
@@ -60,7 +57,7 @@ public class Projektverwaltung {
         }
 
         return -1;
-    }*/
+    }
 
     public ArrayList<Projekt> NamenSuche(String Ziel){
         ArrayList<Projekt> namenListe = new ArrayList<>(projektMap.values());
