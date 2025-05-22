@@ -83,4 +83,50 @@ public class Projektverwaltung {
         return -1;
     }
 
+    public void NameSortieren(){
+        List<String> keyListe = new ArrayList<>(projektMap.keySet());
+        bubbleSortName(keyListe);
+        System.out.println(keyListe);
+
+    }
+
+    public static void bubbleSortName(List<String> list) {
+        int laenge = list.size();
+
+        for (int i = laenge - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (list.get(j).compareTo(list.get(j + 1)) > 0) {
+                    // Elemente tauschen
+                    String temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    public void NoteSortieren(){
+        List<Projekt> projekte = new ArrayList<>(projektMap.values());
+        bubbleSortNote(projekte); // ✔ richtige Methode
+        System.out.println("Projekte sortiert nach Note:");
+        for (Projekt p : projekte) {
+            System.out.println(p.getProjektname() + " - Note: " + p.getNote());
+        }
+    }
+
+    public static void bubbleSortNote(List<Projekt> projekte) {
+        int laenge = projekte.size();
+        for (int i = laenge - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (projekte.get(j).getNote() > projekte.get(j + 1).getNote()) {
+                    // Projekte tauschen
+                    Projekt temp = projekte.get(j);
+                    projekte.set(j, projekte.get(j + 1));
+                    projekte.set(j + 1, temp);
+                }
+            }
+        }
+
+    }
+
 }
