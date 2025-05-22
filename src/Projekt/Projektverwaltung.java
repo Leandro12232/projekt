@@ -12,19 +12,21 @@ public class Projektverwaltung {
         projektMap = new ProjektMap<String, Projekt>();
     }
 
-    public void Projekthinzufuegen(String name, int note, int abgabedatum, List<Student> schuelerliste){
-        Projekt projekt = new Projekt(name, note, abgabedatum, schuelerliste);
+    public void Projekthinzufuegen(String projektname, int note, int abgabedatum, ArrayList<Student> schuelerliste){
+        Projekt projekt = new Projekt(projektname, note, abgabedatum, schuelerliste);
 
-        projektMap.put(name, projekt);
+        projektMap.put(projektname, projekt);
 
-        System.out.println("Projekt: "+projekt.getName()+" wurde erfolgreich hinzugefügt");
-        System.out.println(projektMap.containsKey(name));
 
     }
 
     public void ProjektlisteAnzeigen(){
         System.out.println(projektMap.keySet());
 
+    }
+
+    public ArrayList<Projekt> getAlle(){
+        return new ArrayList<>(projektMap.values());
     }
 
     public void Projektloeschen(String name){

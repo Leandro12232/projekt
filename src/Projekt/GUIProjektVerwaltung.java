@@ -1,27 +1,31 @@
 package Projekt;
 
 
+import Exceptions.DoppelterName;
+import Exceptions.LeereNamenSIndNichtErlaubt;
+import Exceptions.UngueltigeNote;
+import Exceptions.UngueltigesDatum;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GUIProjektVerwaltung extends JFrame {
+    ArrayList<Student> schuelerliste = new ArrayList<Student>();
 
-    private JTextField tName;
-    private JTextField tNote;
-    private JTextField tAbgabedatum;
-    private JTextField tProjektname;
-    private JTextField tMatrikelnummer;
-    private JButton btnHinzufuegen;
     private JButton btnLoeschen;
     private JTable table;
     private DefaultTableModel tableModel;
     private Projektverwaltung projektVerwaltung;
+    private JButton btnProjekt;
+    private JButton btnAnzeigen;
+
 
     public GUIProjektVerwaltung() {
-        setTitle("Notenverwaltung");
+        setTitle("Projwktverwaltung");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -34,32 +38,19 @@ public class GUIProjektVerwaltung extends JFrame {
     private void initGui() {
         JPanel inputpanel = new JPanel(new FlowLayout());
 
-        inputpanel.add(new JLabel("Name"));
-        tName = new JTextField(10);
-        inputpanel.add(tName);
+        projektVerwaltung = new Projektverwaltung();
 
-        inputpanel.add(new JLabel("Note"));
-        tNote = new JTextField(5);
-        inputpanel.add(tNote);
+        btnProjekt = new JButton("Projekt Hinzufügen");
+        inputpanel.add(btnProjekt);
 
-        inputpanel.add(new JLabel("Abgabedatum"));
-        tAbgabedatum = new JTextField(10);
-        inputpanel.add(tAbgabedatum);
+        btnAnzeigen = new JButton("Anzeigen");
+        inputpanel.add(btnAnzeigen);
 
-        inputpanel.add(new JLabel("Projektname"));
-        tProjektname = new JTextField(15);
-        inputpanel.add(tProjektname);
 
-        inputpanel.add(new JLabel("Matrikelnummer"));
-        tMatrikelnummer = new JTextField(10);
-        inputpanel.add(tMatrikelnummer);
-
-        btnHinzufuegen = new JButton("Hinzufügen");
-        inputpanel.add(btnHinzufuegen);
 
         add(inputpanel, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"Name", "Note", "Abgabedatum", "Projektname", "Matrikelnummer"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"Projektname", "Note", "Abgabedatum", "Student"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollpane = new JScrollPane(table);
         add(scrollpane, BorderLayout.CENTER);
@@ -69,42 +60,77 @@ public class GUIProjektVerwaltung extends JFrame {
         bottompanel.add(btnLoeschen, BorderLayout.WEST);
         add(bottompanel, BorderLayout.SOUTH);
 
-        btnHinzufuegen.addActionListener(e -> schuelerhinzufuegen());
-        btnLoeschen.addActionListener(e -> schuelerloeschen());
+        //btnLoeschen.addActionListener(e -> schuelerloeschen());
+        btnProjekt.addActionListener(e -> projekthinzufuegen());
+        btnAnzeigen.addActionListener(e -> anzeigen());
 
-        tName.addActionListener(e -> btnHinzufuegen.doClick());
-        tNote.addActionListener(e -> btnHinzufuegen.doClick());
-        tAbgabedatum.addActionListener(e -> btnHinzufuegen.doClick());
-        tProjektname.addActionListener(e -> btnHinzufuegen.doClick());
-        tMatrikelnummer.addActionListener(e -> btnHinzufuegen.doClick());
     }
 
-    private void schuelerhinzufuegen() {
-        String name = tName.getText().trim();
-        int note = Integer.parseInt(tNote.getText().trim());
-        int abgabedatum = Integer.parseInt(tAbgabedatum.getText().trim());
-        String projektname = tProjektname.getText().trim();
-        int matrikelnummer = Integer.parseInt(tMatrikelnummer.getText().trim());
 
-        Student student = new Student(name, abgabedatum, matrikelnummer);
-        List<Student> liste = new ArrayList<>();
-        liste.add(student);
 
-        projektVerwaltung.Projekthinzufuegen(projektname, note, abgabedatum, liste);
+    private void projekthinzufuegen() throws DoppelterName, LeereNamenSIndNichtErlaubt, UngueltigeNote, UngueltigesDatum {
+        try {
+            //Eingabe des Projektnamens in ein OtionPane
+            String Projektname = JOptionPane.showInputDialog("Projektname:");
+            if (Projektname == null || Projektname.isBlank()) {
+                throw new LeereNamenSIndNichtErlaubt("Name leer.");
+            }
+            //Eingabe der Note in ein OptionPane
+            String NoteText = JOptionPane.showInputDialog("Note (1-6):");
+            int Note = Integer.parseInt(NoteText);
+            if (Note < 1 || Note > 6) {
+                throw new UngueltigeNote("Ungültige Note.");
+            }
+            //Eingabe des Datums in ein OptionPane
+            String DatumText = JOptionPane.showInputDialog("Abgabedatum (JJJJMMTT):");
+            int Datum = Integer.parseInt(DatumText);
+            if (Datum < 20230101 || Datum > 21001231) {
+                throw new UngueltigesDatum("Ungültiges Datum.");
+            }
 
-        tableModel.addRow(new Object[]{name, note, abgabedatum, projektname, matrikelnummer});
+            String AnzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
+            int anzahl = Integer.parseInt(AnzahlText);
+            ArrayList<Student> studentenListe = new ArrayList<>();
 
-        tName.setText("");
-        tNote.setText("");
-        tAbgabedatum.setText("");
-        tProjektname.setText("");
-        tMatrikelnummer.setText("");
-    }
+            for (int i = 0; i < anzahl; i++) {
+                String sName = JOptionPane.showInputDialog("Name Student " + (i + 1) + ":");
 
-    private void schuelerloeschen() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow >= 0) {
-            tableModel.removeRow(selectedRow);
+                String GeburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT):");
+                int geburt = Integer.parseInt(GeburtText);
+
+                String MatrikelnummerText = JOptionPane.showInputDialog("Matrikelnummer:");
+                int Matrikelnummer = Integer.parseInt(MatrikelnummerText);
+
+                studentenListe.add(new Student(sName, geburt, Matrikelnummer));
+            }
+
+            projektVerwaltung.Projekthinzufuegen(Projektname, Note, Datum, studentenListe);
+            JOptionPane.showMessageDialog(this,"Hinzugefügt");
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,"Ungültige Zahleneingabe");;
+        } catch (LeereNamenSIndNichtErlaubt | DoppelterName | UngueltigesDatum | UngueltigeNote ex) {
+            JOptionPane.showMessageDialog(this,"Fehler"+ex.getMessage());
         }
     }
+
+
+    private void ausgabeTabelle(Projekt p) {
+        StringBuilder studenten = new StringBuilder();
+        ArrayList<Student> liste = p.getSchuelerListe();
+        if (liste != null) {
+            for (Student s : p.getSchuelerListe()) {
+                studenten.append(s.getName()).append("( ").append(s.getMatrikelnummer()).append(", ").append(s.getDatum()).append("), ");
+            }
+        }
+        tableModel.addRow(new Object[]{p.getProjektname(), p.getNote(), p.getAbgabedatum(), studenten.toString()});
+    }
+
+   private void anzeigen(){
+        tableModel.setRowCount(0);
+        for(Projekt p : projektVerwaltung.getAlle()){
+            ausgabeTabelle(p);
+        }
+    }
+
 }

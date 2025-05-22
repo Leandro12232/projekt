@@ -15,5 +15,7 @@ public class Student extends Mensch {
     public void setMatrikelnummer(int matrikelnummer) {
         Matrikelnummer = matrikelnummer;
     }
+
+
 }
 
