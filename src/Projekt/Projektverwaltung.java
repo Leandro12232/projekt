@@ -12,7 +12,7 @@ public class Projektverwaltung {
         projektMap = new ProjektMap<String, Projekt>();
     }
 
-    public void Projekthinzufuegen(String projektname, int note, int abgabedatum, ArrayList<Student> schuelerliste){
+    public void Projekthinzufuegen(String projektname, int note, int abgabedatum, ArrayList<Student> schuelerliste) {
         Projekt projekt = new Projekt(projektname, note, abgabedatum, schuelerliste);
 
         projektMap.put(projektname, projekt);
@@ -20,26 +20,67 @@ public class Projektverwaltung {
 
     }
 
-    public ArrayList<Projekt> getAlle(){
+    public void LeeresProjekthinzufuegen(){
+        Projekt projekt = new Projekt();
+
+        projektMap.put("", projekt);
+    }
+
+    public Projekt GetProjektName(String projektname){
+        return projektMap.get(projektname);
+
+    }
+
+    public void ProjektBearbeiten(String alterProjektname, String neuerName, int neueNote, int neuesDatum, ArrayList<Student> neueStudentenListe){
+        // Wenn der Projektname geändert wurde
+        if (!alterProjektname.equals(neuerName)) {
+            projektMap.remove(alterProjektname); // altes Projekt entfernen
+        }
+
+        Projekt neuesProjekt = new Projekt(neuerName, neueNote, neuesDatum, neueStudentenListe);
+        projektMap.put(neuerName, neuesProjekt); // neues Projekt hinzufügen
+    }
+
+    public ArrayList<Projekt> getAlle() {
         return new ArrayList<>(projektMap.values());
     }
 
-    public void Projektloeschen(String projektname){
+    public void Projektloeschen(String projektname) {
         projektMap.remove(projektname);
     }
 
-    public ArrayList<Projekt> NoteSuche(int Ziel){
+
+    public ArrayList<Projekt> NoteSuche(int ziel) {
         ArrayList<Projekt> notenListe = new ArrayList<>(projektMap.values());
+
+        // Wichtig: Liste muss sortiert sein!
+        bubbleSortNote(notenListe);
+
         ArrayList<Projekt> result = new ArrayList<>();
-        int index = binaereSearch(notenListe, Ziel);
-        if (index >= 0) {
-            result.add(notenListe.get(index));
+        int index = binaereSuche(notenListe, ziel);
+
+        if (index == -1) {
+            return result; // leer, keine Treffer
+        }
+
+        // Nach links scannen
+        int i = index;
+        while (i >= 0 && notenListe.get(i).getNote() == ziel) {
+            result.add(0, notenListe.get(i)); // vorne einfügen
+            i--;
+        }
+
+        // Nach rechts scannen (ohne das ursprüngliche index-Element doppelt zu nehmen)
+        i = index + 1;
+        while (i < notenListe.size() && notenListe.get(i).getNote() == ziel) {
+            result.add(notenListe.get(i));
+            i++;
         }
         return result;
     }
 
 
-   public static int binaereSearch(ArrayList<Projekt> liste, int ziel) {
+   public static int binaereSuche(ArrayList<Projekt> liste, int ziel) {
         int links = 0;
         int rechts = liste.size() - 1;
 

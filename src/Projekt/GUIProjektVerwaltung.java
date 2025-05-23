@@ -19,6 +19,8 @@ public class GUIProjektVerwaltung extends JFrame {
     private JButton btnNoteSortieren;
     private JButton btnProjektSuchen;
     private JButton btnNoteSuchen;
+    private JButton btnLeeresProjekt;
+    private JButton btnProjektBearbeiten;
     private JTable table;
     private DefaultTableModel tableModel;
     private JButton btnProjekt;
@@ -47,6 +49,12 @@ public class GUIProjektVerwaltung extends JFrame {
 
         btnProjekt = new JButton("Projekt Hinzufügen");
         inputpanel.add(btnProjekt);
+
+        btnLeeresProjekt = new JButton("Leeres Projekt Hinzufügen");
+        inputpanel.add(btnLeeresProjekt);
+
+        btnProjektBearbeiten = new JButton("Projekt Bearbeiten");
+        inputpanel.add(btnProjektBearbeiten);
 
         btnAnzeigen = new JButton("Anzeigen");
         inputpanel.add(btnAnzeigen);
@@ -80,6 +88,8 @@ public class GUIProjektVerwaltung extends JFrame {
 
         btnProjektloeschen.addActionListener(e -> projektloeschen());
         btnProjekt.addActionListener(e -> projekthinzufuegen());
+        btnLeeresProjekt.addActionListener(e -> leeresprojekthinzufuegen());
+        btnProjektBearbeiten.addActionListener(e -> projektbearbeiten());
         btnAnzeigen.addActionListener(e -> anzeigen());
         btnNameSortieren.addActionListener(e -> namesortieren());
         btnNoteSortieren.addActionListener(e -> notesortieren());
@@ -136,6 +146,75 @@ public class GUIProjektVerwaltung extends JFrame {
             JOptionPane.showMessageDialog(this,"Ungültige Zahleneingabe");;
         } catch (LeereNamenSIndNichtErlaubt | DoppelterName | UngueltigesDatum | UngueltigeNote ex) {
             JOptionPane.showMessageDialog(this,"Fehler"+ex.getMessage());
+        }
+    }
+
+    private void leeresprojekthinzufuegen(){
+        projektVerwaltung.LeeresProjekthinzufuegen();
+        JOptionPane.showMessageDialog(this,"Hinzugefügt");
+    }
+
+    private void projektbearbeiten() {
+        int selectedRow = table.getSelectedRow();
+
+        if (selectedRow >= 0) {
+            // Projektname aus der Tabelle auslesen (angenommen Spalte 0 enthält den Namen)
+            String alterProjektname = (String) tableModel.getValueAt(selectedRow, 0);
+
+            Projekt altesProjekt = projektVerwaltung.GetProjektName(alterProjektname); // eigene Methode nötig
+
+            if (altesProjekt == null) {
+                JOptionPane.showMessageDialog(this, "Projekt nicht gefunden!");
+                return;
+            }
+
+            try {
+                // Neue Werte abfragen
+                String neuerName = JOptionPane.showInputDialog("Neuer Projektname:", altesProjekt.getProjektname());
+                if (neuerName == null || neuerName.isBlank()) {
+                    throw new LeereNamenSIndNichtErlaubt("Name leer.");
+                }
+
+                String noteText = JOptionPane.showInputDialog("Neue Note (1-6):", altesProjekt.getNote());
+                int neueNote = Integer.parseInt(noteText);
+                if (neueNote < 1 || neueNote > 6) {
+                    throw new UngueltigeNote("Ungültige Note.");
+                }
+
+                String datumText = JOptionPane.showInputDialog("Neues Abgabedatum (JJJJMMTT):", altesProjekt.getAbgabedatum());
+                int neuesDatum = Integer.parseInt(datumText);
+                if (neuesDatum < 20230101 || neuesDatum > 21001231) {
+                    throw new UngueltigesDatum("Ungültiges Datum.");
+                }
+
+                // Studentenliste neu abfragen
+                String anzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
+                int anzahl = Integer.parseInt(anzahlText);
+
+                ArrayList<Student> neueStudenten = new ArrayList<>();
+                for (int i = 0; i < anzahl; i++) {
+                    String sName = JOptionPane.showInputDialog("Name Student " + (i + 1) + ":");
+                    String geburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT):");
+                    int geburt = Integer.parseInt(geburtText);
+                    String matrikelText = JOptionPane.showInputDialog("Matrikelnummer:");
+                    int matrikel = Integer.parseInt(matrikelText);
+                    neueStudenten.add(new Student(sName, geburt, matrikel));
+                }
+
+                // Bestehendes Projekt entfernen und neues einfügen (oder ersetzen)
+                projektVerwaltung.ProjektBearbeiten(alterProjektname, neuerName, neueNote, neuesDatum, neueStudenten);
+                anzeigen(); // Tabelle neu laden
+
+                JOptionPane.showMessageDialog(this, "Projekt aktualisiert.");
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Ungültige Zahleneingabe.");
+            } catch (LeereNamenSIndNichtErlaubt | UngueltigeNote | UngueltigesDatum | DoppelterName ex) {
+                JOptionPane.showMessageDialog(this, "Fehler: " + ex.getMessage());
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Kein Projekt ausgewählt!");
         }
     }
 
