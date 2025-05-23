@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class GUIProjektVerwaltung extends JFrame {
 
-    private JButton btnLoeschen;
+    private JButton btnProjektloeschen;
     private JButton btnNameSortieren;
     private JButton btnNoteSortieren;
     private JButton btnProjektSuchen;
@@ -23,8 +23,11 @@ public class GUIProjektVerwaltung extends JFrame {
     private DefaultTableModel tableModel;
     private JButton btnProjekt;
     private JButton btnAnzeigen;
+    private JButton btnPasswortaendern;
 
     private Projektverwaltung projektVerwaltung;
+    private String passwort = "admin";
+
 
 
     public GUIProjektVerwaltung() {
@@ -68,17 +71,22 @@ public class GUIProjektVerwaltung extends JFrame {
         add(scrollpane, BorderLayout.CENTER);
 
         JPanel bottompanel = new JPanel(new BorderLayout());
-        btnLoeschen = new JButton("Löschen");
-        bottompanel.add(btnLoeschen, BorderLayout.WEST);
+        btnProjektloeschen = new JButton("Löschen");
+        bottompanel.add(btnProjektloeschen, BorderLayout.WEST);
+        //Passwort
+        btnPasswortaendern = new JButton("Passwort ändern");
+        bottompanel.add(btnPasswortaendern, BorderLayout.EAST);
         add(bottompanel, BorderLayout.SOUTH);
 
-        //btnLoeschen.addActionListener(e -> schuelerloeschen());
+        btnProjektloeschen.addActionListener(e -> projektloeschen());
         btnProjekt.addActionListener(e -> projekthinzufuegen());
         btnAnzeigen.addActionListener(e -> anzeigen());
         btnNameSortieren.addActionListener(e -> namesortieren());
         btnNoteSortieren.addActionListener(e -> notesortieren());
         btnProjektSuchen.addActionListener(e -> projektsuchen());
         btnNoteSuchen.addActionListener(e -> notesuchen());
+        //Passwort
+        btnPasswortaendern.addActionListener(e -> passwortAendern());
 
     }
 
@@ -196,4 +204,48 @@ public class GUIProjektVerwaltung extends JFrame {
         }
     }
 
+    private void projektloeschen(){
+        int selectedRow = table.getSelectedRow();
+
+        if(selectedRow >= 0){
+
+            // Projektname aus der Spalte holen
+            String projektname = (String) table.getValueAt(selectedRow, 0);
+
+            //Passwortabfrage
+            String eingabe = JOptionPane.showInputDialog(this,"Bitte Passwort eingeben!");
+
+           if(eingabe != null && passwort.equals(eingabe)){
+               //Projekt in der Verwaltung löschen
+               projektVerwaltung.Projektloeschen(projektname);
+
+               //Zeile aus der Tabelle entfernen
+               tableModel.removeRow(selectedRow);
+
+               JOptionPane.showMessageDialog(this,"Projekt " + projektname + " wurde gelöscht.");
+           }else {
+               JOptionPane.showMessageDialog(this,"Falsches Passwort. Löschung wird abgebrochen!");
+           }
+
+
+        } else {
+            JOptionPane.showMessageDialog(this,"Kein Projekt ausgewählt!");
+        }
+    }
+
+    public void passwortAendern(){
+        String altesPasswort = JOptionPane.showInputDialog(this, "Aktuelles Passwort:");
+
+        if (passwort.equals(altesPasswort)) {
+            String neuesPasswort = JOptionPane.showInputDialog(this, "Neues Passwort:");
+            if (neuesPasswort != null && !neuesPasswort.isBlank()) {
+                passwort = neuesPasswort;
+                JOptionPane.showMessageDialog(this, "Passwort erfolgreich geändert.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Neues Passwort darf nicht leer sein.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Falsches aktuelles Passwort.");
+        }
+    }
 }
