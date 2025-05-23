@@ -17,6 +17,7 @@ public class GUIProjektVerwaltung extends JFrame {
     private JButton btnProjektloeschen;
     private JButton btnNameSortieren;
     private JButton btnNoteSortieren;
+    private JButton btnAbgabeDatumSortieren;
     private JButton btnProjektSuchen;
     private JButton btnNoteSuchen;
     private JButton btnLeeresProjekt;
@@ -65,6 +66,9 @@ public class GUIProjektVerwaltung extends JFrame {
         btnNoteSortieren = new JButton("Nach Note Sortieren");
         inputpanel.add(btnNoteSortieren);
 
+        btnAbgabeDatumSortieren = new JButton("Nach AbgabeDatum Sortieren");
+        inputpanel.add(btnAbgabeDatumSortieren);
+
         btnProjektSuchen = new JButton("Projekt suchen");
         inputpanel.add(btnProjektSuchen);
 
@@ -93,6 +97,7 @@ public class GUIProjektVerwaltung extends JFrame {
         btnAnzeigen.addActionListener(e -> anzeigen());
         btnNameSortieren.addActionListener(e -> namesortieren());
         btnNoteSortieren.addActionListener(e -> notesortieren());
+        btnAbgabeDatumSortieren.addActionListener(e -> abgabedatumsortieren());
         btnProjektSuchen.addActionListener(e -> projektsuchen());
         btnNoteSuchen.addActionListener(e -> notesuchen());
         //Passwort
@@ -234,6 +239,15 @@ public class GUIProjektVerwaltung extends JFrame {
             ausgabeTabelle(p);
         }
         JOptionPane.showMessageDialog(this,"Nach Note sortiert");
+    }
+
+    private void abgabedatumsortieren(){
+        ArrayList<Projekt> sortierteListeAbgabeDatum = projektVerwaltung.AbgabeDatumSortieren();
+        tableModel.setRowCount(0);
+        for (Projekt p : sortierteListeAbgabeDatum) {
+            ausgabeTabelle(p);
+        }
+        JOptionPane.showMessageDialog(this,"Nach Abgabedatum sortiert");
     }
 
 

@@ -26,8 +26,8 @@ public class Projektverwaltung {
         projektMap.put("", projekt);
     }
 
-    public Projekt GetProjektName(String projektname){
-        return projektMap.get(projektname);
+    public Projekt GetProjektName(String alterprojektname){
+        return projektMap.get(alterprojektname);
 
     }
 
@@ -128,7 +128,7 @@ public class Projektverwaltung {
 
     }
 
-    public static void bubbleSortName(List<Projekt> list) {
+    public static void bubbleSortName(ArrayList<Projekt> list) {
         int laenge = list.size();
 
         for (int i = laenge - 1; i > 0; i--) {
@@ -149,7 +149,7 @@ public class Projektverwaltung {
         return projekte;
     }
 
-    public static void bubbleSortNote(List<Projekt> projekte) {
+    public static void bubbleSortNote(ArrayList<Projekt> projekte) {
         int laenge = projekte.size();
         for (int i = laenge - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
@@ -162,6 +162,31 @@ public class Projektverwaltung {
             }
         }
 
+    }
+    public ArrayList<Projekt> AbgabeDatumSortieren(){
+        ArrayList<Projekt> projekte = new ArrayList<>(projektMap.values());
+        SelectionSort(projekte);
+        return projekte;
+    }
+
+    public static void SelectionSort(ArrayList<Projekt> projekt) {
+        int laenge = projekt.size();
+        for (int i = 0; i < laenge - 1; i++) {
+            int min_index = i;
+
+            for (int j = i + 1; j < laenge; j++) {
+                if (projekt.get(j).getAbgabedatum() < projekt.get(min_index).getAbgabedatum()) {
+                    min_index = j;
+                }
+            }
+
+            // Nur tauschen, wenn nötig
+            if (min_index != i) {
+                Projekt temp = projekt.get(i);
+                projekt.set(i, projekt.get(min_index));
+                projekt.set(min_index, temp);
+            }
+        }
     }
 
 }
