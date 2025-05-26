@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class GUIProjektVerwaltung extends JFrame {
@@ -117,14 +119,51 @@ public class GUIProjektVerwaltung extends JFrame {
             //Temporäre Arraylist student
             ArrayList<Student> studentenListe = new ArrayList<>();
 
+            //Hashmap wird verwendet um Duplikate zu verhindern
+            Set<Integer> verwendeteMatrikelnummer = new HashSet<>();
+
             for (int i = 0; i < anzahl; i++) {
                 String sName = JOptionPane.showInputDialog("Name Student " + (i + 1) + ":");
 
-                String GeburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT):");
-                int geburt = Integer.parseInt(GeburtText);
 
-                String MatrikelnummerText = JOptionPane.showInputDialog("Matrikelnummer:");
-                int Matrikelnummer = Integer.parseInt(MatrikelnummerText);
+                int geburt = 0;
+                boolean gueltigesDatum = false;
+                while (!gueltigesDatum) {
+                    String GeburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT):");
+
+                    try{
+                        geburt = Integer.parseInt(GeburtText);
+                        if(geburt >= 19900101 && geburt <= 20250101) {
+                            gueltigesDatum = true;
+                        }else{
+                            JOptionPane.showMessageDialog(this, "Das Datum muss zwischen 19900101 und 20250101 liegen! ");
+                        }
+                    }catch(NumberFormatException e){
+                        JOptionPane.showMessageDialog(this, e.getMessage());
+                    }
+                }
+
+//Matrikelnummer prüfen ob 7 stellig & eindeutig
+                int Matrikelnummer = 0;
+                boolean gueltigeMartrikelnr = false;
+
+                while (!gueltigeMartrikelnr) {
+                    String MatrikelnummerText = JOptionPane.showInputDialog("Matrikelnummer:");
+                    if(MatrikelnummerText != null && MatrikelnummerText.matches("\\d{7}")){
+                        int matrikelnummer = Integer.parseInt(MatrikelnummerText);
+                        if(verwendeteMatrikelnummer.contains(matrikelnummer)){
+                           JOptionPane.showMessageDialog(this, "Diese Matrikelnummer wurde bereits eingegeben.");
+                        }else {
+                            gueltigeMartrikelnr = true;
+                            verwendeteMatrikelnummer.add(matrikelnummer);
+                        }
+
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Matrikelnummer muss genau 7 Ziffern enthalten.");
+                    }
+                }
+
+
 
                 studentenListe.add(new Student(sName, geburt, Matrikelnummer));
             }
@@ -135,7 +174,7 @@ public class GUIProjektVerwaltung extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this,"Ungültige Zahleneingabe");;
         } catch (LeereNamenSIndNichtErlaubt | DoppelterName | UngueltigesDatum | UngueltigeNote ex) {
-            JOptionPane.showMessageDialog(this,"Fehler"+ex.getMessage());
+            JOptionPane.showMessageDialog(this,"Fehler "+ex.getMessage());
         }
     }
 
