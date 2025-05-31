@@ -30,6 +30,7 @@ public class GUIProjektVerwaltung extends JFrame {
     private JButton btnAnzeigen;
     private JButton btnPasswortaendern;
 
+
     private Projektverwaltung projektVerwaltung;
     private String passwort = "admin";
 
@@ -90,6 +91,7 @@ public class GUIProjektVerwaltung extends JFrame {
         //Passwort
         btnPasswortaendern = new JButton("Passwort ändern");
         bottompanel.add(btnPasswortaendern, BorderLayout.EAST);
+
         add(bottompanel, BorderLayout.SOUTH);
 
         btnProjektloeschen.addActionListener(e -> projektloeschen());
@@ -105,29 +107,87 @@ public class GUIProjektVerwaltung extends JFrame {
         //Passwort
         btnPasswortaendern.addActionListener(e -> passwortAendern());
 
+
     }
 
 
 
     private void projekthinzufuegen() throws DoppelterName, LeereNamenSIndNichtErlaubt, UngueltigeNote, UngueltigesDatum {
         try {
-            //Eingabe des Projektnamens in ein OtionPane
-            String Projektname = JOptionPane.showInputDialog("Projektname:");
-            if (Projektname == null || Projektname.isBlank()) {
-                throw new LeereNamenSIndNichtErlaubt("Name leer.");
+            String Projektname = null;
+
+            while (true) {
+                Projektname = JOptionPane.showInputDialog("Projektname:");
+
+                // Prüfen, ob Benutzer abgebrochen hat
+                if (Projektname == null) {
+                    JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                    return;
+                }
+
+                // Prüfen, ob Eingabe leer ist
+                if (Projektname.isBlank()) {
+                    JOptionPane.showMessageDialog(this, "Name darf nicht leer sein!");
+                    continue;
+                }
+
+                // Prüfen, ob Projektname bereits vorhanden ist
+                if (projektVerwaltung.projektnamenVorhanden(Projektname)) {
+                    JOptionPane.showMessageDialog(this, "Projekt existiert bereits!");
+                    continue;
+                }
+
+                // Gültiger Name
+                break;
             }
-            //Eingabe der Note in ein OptionPane
-            String NoteText = JOptionPane.showInputDialog("Note (1-6):");
-            int Note = Integer.parseInt(NoteText);
-            if (Note < 1 || Note > 6) {
-                throw new UngueltigeNote("Ungültige Note.");
+
+
+
+            int Note = 0;
+            while (true) {
+                String NoteText = JOptionPane.showInputDialog("Note (1-6):");
+
+                if (NoteText == null) {
+                    JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                    return;
+                }
+
+                try {
+                    Note = Integer.parseInt(NoteText);
+                    if (Note < 1 || Note > 6) {
+                        JOptionPane.showMessageDialog(this, "Note muss zwischen 1 und 6 liegen!");
+                        continue;
+                    }
+                    break; // gültige Note
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Bitte eine gültige Zahl zwischen 1 und 6 eingeben.");
+                }
             }
-            //Eingabe des Datums in ein OptionPane
-            String DatumText = JOptionPane.showInputDialog("Abgabedatum (JJJJMMTT):");
-            int Datum = Integer.parseInt(DatumText);
-            if (Datum < 20230101 || Datum > 21001231) {
-                throw new UngueltigesDatum("Ungültiges Datum.");
+
+
+            int Datum = -1;
+
+            while (true) {
+                String DatumText = JOptionPane.showInputDialog("Abgabedatum (JJJJMMTT):");
+
+                // Benutzer klickt auf Abbrechen
+                if (DatumText == null) {
+                    JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                    return;
+                }
+
+                try {
+                    Datum = Integer.parseInt(DatumText);
+                    if (Datum < 20230101 || Datum > 21001231) {
+                        JOptionPane.showMessageDialog(this, "Das Datum muss zwischen 20230101 und 21001231 liegen!");
+                        continue;
+                    }
+                    break; // gültiges Datum
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Bitte ein gültiges Datum im Format JJJJMMTT eingeben!");
+                }
             }
+
 
             String AnzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
             int anzahl = Integer.parseInt(AnzahlText);
@@ -148,7 +208,7 @@ public class GUIProjektVerwaltung extends JFrame {
 
                     try{
                         geburt = Integer.parseInt(GeburtText);
-                        if(geburt >= 19900101 && geburt <= 20250101) {
+                        if(geburt >= 19900101 || geburt <= 20250101) {
                             gueltigesDatum = true;
                         }else{
                             JOptionPane.showMessageDialog(this, "Das Datum muss zwischen 19900101 und 20250101 liegen! ");
@@ -158,26 +218,16 @@ public class GUIProjektVerwaltung extends JFrame {
                     }
                 }
 
-//Matrikelnummer prüfen ob 7 stellig & eindeutig
-                int Matrikelnummer = 0;
-                boolean gueltigeMartrikelnr = false;
 
-                while (!gueltigeMartrikelnr) {
-                    String MatrikelnummerText = JOptionPane.showInputDialog("Matrikelnummer:");
-                    if(MatrikelnummerText != null && MatrikelnummerText.matches("\\d{7}")){
-                        int matrikelnummer = Integer.parseInt(MatrikelnummerText);
-                        if(verwendeteMatrikelnummer.contains(matrikelnummer)){
-                           JOptionPane.showMessageDialog(this, "Diese Matrikelnummer wurde bereits eingegeben.");
-                        }else {
-                            gueltigeMartrikelnr = true;
-                            verwendeteMatrikelnummer.add(matrikelnummer);
-                        }
+                String MatrikelnummerText = JOptionPane.showInputDialog("Matrikelnummer:");
+                int Matrikelnummer = Integer.parseInt(MatrikelnummerText);
+                if(verwendeteMatrikelnummer.contains(Matrikelnummer)){
+                    JOptionPane.showMessageDialog(this, "Diese Matrikelnummer wurde bereits eingegeben.");
+                    JOptionPane.showMessageDialog(this, "Matrikelnummer");
+                }else {
 
-                    }else{
-                        JOptionPane.showMessageDialog(this, "Matrikelnummer muss genau 7 Ziffern enthalten.");
-                    }
+                    verwendeteMatrikelnummer.add(Matrikelnummer);
                 }
-
 
 
                 studentenListe.add(new Student(sName, geburt, Matrikelnummer));
@@ -223,6 +273,7 @@ public class GUIProjektVerwaltung extends JFrame {
                 int neueNote = Integer.parseInt(noteText);
                 if (neueNote < 1 || neueNote > 6) {
                     throw new UngueltigeNote("Ungültige Note.");
+
                 }
 
                 String datumText = JOptionPane.showInputDialog("Neues Abgabedatum (JJJJMMTT):", altesProjekt.getAbgabedatum());

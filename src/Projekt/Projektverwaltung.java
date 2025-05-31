@@ -189,4 +189,9 @@ public class Projektverwaltung {
         }
     }
 
+    //Doppelter Projektname
+    public boolean projektnamenVorhanden(String Name){
+        return projektMap.containsKey(Name);
+    }
+
 }
