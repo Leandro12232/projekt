@@ -14,8 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+// GUI-Klasse für die Projektverwaltung
 public class GUIProjektVerwaltung extends JFrame {
-
+    // GUI-Komponenten: Buttons, Tabelle, TableModel
     private JButton btnProjektloeschen;
     private JButton btnNameSortieren;
     private JButton btnNoteSortieren;
@@ -30,12 +31,12 @@ public class GUIProjektVerwaltung extends JFrame {
     private JButton btnAnzeigen;
     private JButton btnPasswortaendern;
 
-
+    // Logik: Projektverwaltung-Instanz und Passwort für Lösch- und Passwortfunktion
     private Projektverwaltung projektVerwaltung;
     private String passwort = "admin";
 
 
-
+    // Konstruktor - Fenster initialisieren
     public GUIProjektVerwaltung() {
         setTitle("Projektverwaltung");
         setSize(1000, 600);
@@ -46,10 +47,9 @@ public class GUIProjektVerwaltung extends JFrame {
 
         initGui();
     }
-
+    // GUI-Initialisierung: Buttons anlegen, Panel einrichten, ActionListener hinzufügen
     private void initGui() {
         JPanel inputpanel = new JPanel(new FlowLayout());
-
 
         btnProjekt = new JButton("Projekt Hinzufügen");
         inputpanel.add(btnProjekt);
@@ -80,11 +80,14 @@ public class GUIProjektVerwaltung extends JFrame {
 
         add(inputpanel, BorderLayout.NORTH);
 
+        // Tabelle mit Spaltenüberschriften anlegen
         tableModel = new DefaultTableModel(new Object[]{"Projektname", "Note", "Abgabedatum", "Student"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollpane = new JScrollPane(table);
+
         add(scrollpane, BorderLayout.CENTER);
 
+        // Unteres Panel mit Löschen-Button und Passwort-Ändern-Button
         JPanel bottompanel = new JPanel(new BorderLayout());
         btnProjektloeschen = new JButton("Löschen");
         bottompanel.add(btnProjektloeschen, BorderLayout.WEST);
@@ -94,6 +97,7 @@ public class GUIProjektVerwaltung extends JFrame {
 
         add(bottompanel, BorderLayout.SOUTH);
 
+        // ActionListener für Buttons festlegen
         btnProjektloeschen.addActionListener(e -> projektloeschen());
         btnProjekt.addActionListener(e -> projekthinzufuegen());
         btnLeeresProjekt.addActionListener(e -> leeresprojekthinzufuegen());
@@ -111,7 +115,7 @@ public class GUIProjektVerwaltung extends JFrame {
     }
 
 
-
+    // Methode zum Hinzufügen eines neuen Projekts mit Nutzereingaben
     private void projekthinzufuegen() throws DoppelterName, LeereNamenSIndNichtErlaubt, UngueltigeNote, UngueltigesDatum {
         try {
             String Projektname = null;
@@ -208,7 +212,7 @@ public class GUIProjektVerwaltung extends JFrame {
 
                     try{
                         geburt = Integer.parseInt(GeburtText);
-                        if(geburt >= 19900101 || geburt <= 20250101) {
+                        if(geburt >= 19900101 && geburt <= 20250101) {
                             gueltigesDatum = true;
                         }else{
                             JOptionPane.showMessageDialog(this, "Das Datum muss zwischen 19900101 und 20250101 liegen! ");
@@ -243,19 +247,21 @@ public class GUIProjektVerwaltung extends JFrame {
         }
     }
 
+    // Einfaches leeres Projekt hinzufügen
     private void leeresprojekthinzufuegen(){
         projektVerwaltung.LeeresProjekthinzufuegen();
         JOptionPane.showMessageDialog(this,"Hinzugefügt");
     }
 
+    // Projekt bearbeiten: Daten des ausgewählten Projekts ändern
     private void projektbearbeiten() {
         int selectedRow = table.getSelectedRow();
 
         if (selectedRow >= 0) {
-            // Projektname aus der Tabelle auslesen (angenommen Spalte 0 enthält den Namen)
+            // Projektname aus der Tabelle auslesen (Spalte 0 enthält den Namen)
             String alterProjektname = (String) tableModel.getValueAt(selectedRow, 0);
 
-            Projekt altesProjekt = projektVerwaltung.GetProjektName(alterProjektname); // eigene Methode nötig
+            Projekt altesProjekt = projektVerwaltung.GetProjektName(alterProjektname);
 
             if (altesProjekt == null) {
                 JOptionPane.showMessageDialog(this, "Projekt nicht gefunden!");
@@ -263,56 +269,156 @@ public class GUIProjektVerwaltung extends JFrame {
             }
 
             try {
-                // Neue Werte abfragen
-                String neuerName = JOptionPane.showInputDialog("Neuer Projektname:", altesProjekt.getProjektname());
-                if (neuerName == null || neuerName.isBlank()) {
-                    throw new LeereNamenSIndNichtErlaubt("Name leer.");
+                String neuerProjektname;
+                while (true) {
+                    neuerProjektname = JOptionPane.showInputDialog("Neuer Projektname:");
+
+                    if (neuerProjektname == null) {
+                        JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                        return;
+                    }
+
+                    if (neuerProjektname.isBlank()) {
+                        JOptionPane.showMessageDialog(this, "Neuer Name darf nicht leer sein!");
+                        continue;
+                    }
+
+                    if (!neuerProjektname.equals(alterProjektname) && projektVerwaltung.projektnamenVorhanden(neuerProjektname)) {
+                        JOptionPane.showMessageDialog(this, "Ein Projekt mit diesem Namen existiert bereits!");
+                        continue;
+                    }
+
+                    break;
                 }
 
-                String noteText = JOptionPane.showInputDialog("Neue Note (1-6):", altesProjekt.getNote());
-                int neueNote = Integer.parseInt(noteText);
-                if (neueNote < 1 || neueNote > 6) {
-                    throw new UngueltigeNote("Ungültige Note.");
+                int neueNote;
+                while (true) {
+                    String noteText = JOptionPane.showInputDialog("Neue Note (1-6):");
+                    if (noteText == null) {
+                        JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                        return;
+                    }
 
+                    try {
+                        neueNote = Integer.parseInt(noteText);
+                        if (neueNote < 1 || neueNote > 6) {
+                            JOptionPane.showMessageDialog(this, "Note muss zwischen 1 und 6 liegen.");
+                        } else {
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Ungültige Eingabe. Bitte eine Zahl eingeben.");
+                    }
                 }
 
-                String datumText = JOptionPane.showInputDialog("Neues Abgabedatum (JJJJMMTT):", altesProjekt.getAbgabedatum());
-                int neuesDatum = Integer.parseInt(datumText);
-                if (neuesDatum < 20230101 || neuesDatum > 21001231) {
-                    throw new UngueltigesDatum("Ungültiges Datum.");
+                int neuesDatum;
+                while (true) {
+                    String datumText = JOptionPane.showInputDialog("Neues Abgabedatum (JJJJMMTT):");
+                    if (datumText == null) {
+                        JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                        return;
+                    }
+
+                    try {
+                        neuesDatum = Integer.parseInt(datumText);
+                        if (neuesDatum < 20230101 || neuesDatum > 21001231) {
+                            JOptionPane.showMessageDialog(this, "Datum muss zwischen 20230101 und 21001231 liegen.");
+                        } else {
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Ungültige Eingabe. Bitte ein Datum im Format JJJJMMTT eingeben.");
+                    }
                 }
 
-                // Studentenliste neu abfragen
-                String anzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
-                int anzahl = Integer.parseInt(anzahlText);
+                int anzahl;
+                while (true) {
+                    String anzahlText = JOptionPane.showInputDialog("Anzahl Studenten:");
+                    if (anzahlText == null) {
+                        JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                        return;
+                    }
 
-                ArrayList<Student> neueStudenten = new ArrayList<>();
+                    try {
+                        anzahl = Integer.parseInt(anzahlText);
+                        if (anzahl <= 0) {
+                            JOptionPane.showMessageDialog(this, "Die Anzahl muss größer als 0 sein.");
+                        } else {
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Bitte eine gültige Anzahl eingeben.");
+                    }
+                }
+
+                ArrayList<Student> studentenListe = new ArrayList<>();
+                Set<Integer> verwendeteMatrikelnummern = new HashSet<>();
+
                 for (int i = 0; i < anzahl; i++) {
-                    String sName = JOptionPane.showInputDialog("Name Student " + (i + 1) + ":");
-                    String geburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT):");
-                    int geburt = Integer.parseInt(geburtText);
-                    String matrikelText = JOptionPane.showInputDialog("Matrikelnummer:");
-                    int matrikel = Integer.parseInt(matrikelText);
-                    neueStudenten.add(new Student(sName, geburt, matrikel));
+                    String studentName = JOptionPane.showInputDialog("Name Student " + (i + 1) + ":");
+                    if (studentName == null || studentName.isBlank()) {
+                        JOptionPane.showMessageDialog(this, "Name darf nicht leer sein.");
+                        i--; // Wiederholen
+                        continue;
+                    }
+
+                    int geburt;
+                    while (true) {
+                        String geburtText = JOptionPane.showInputDialog("Geburtsdatum (JJJJMMTT) von " + studentName + ":");
+                        if (geburtText == null) {
+                            JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                            return;
+                        }
+
+                        try {
+                            geburt = Integer.parseInt(geburtText);
+                            if (geburt >= 19900101 && geburt <= 20250101) {
+                                break;
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Geburtsdatum muss zwischen 19900101 und 20250101 liegen.");
+                            }
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(this, "Ungültiges Geburtsdatum.");
+                        }
+                    }
+
+                    int matrikelnummer;
+                    while (true) {
+                        String matrikelText = JOptionPane.showInputDialog("Matrikelnummer von " + studentName + ":");
+                        if (matrikelText == null) {
+                            JOptionPane.showMessageDialog(this, "Aktion abgebrochen.");
+                            return;
+                        }
+
+                        try {
+                            matrikelnummer = Integer.parseInt(matrikelText);
+                            if (verwendeteMatrikelnummern.contains(matrikelnummer)) {
+                                JOptionPane.showMessageDialog(this, "Diese Matrikelnummer wurde bereits eingegeben.");
+                            } else {
+                                verwendeteMatrikelnummern.add(matrikelnummer);
+                                break;
+                            }
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(this, "Ungültige Matrikelnummer.");
+                        }
+                    }
+
+                    studentenListe.add(new Student(studentName, geburt, matrikelnummer));
                 }
 
-                // Bestehendes Projekt entfernen und neues einfügen (oder ersetzen)
-                projektVerwaltung.ProjektBearbeiten(alterProjektname, neuerName, neueNote, neuesDatum, neueStudenten);
-                anzeigen(); // Tabelle neu laden
+                projektVerwaltung.ProjektBearbeiten(alterProjektname, neuerProjektname, neueNote, neuesDatum, studentenListe);
+                anzeigen(); // Tabelle aktualisieren
+                JOptionPane.showMessageDialog(this, "Projekt wurde erfolgreich aktualisiert.");
 
-                JOptionPane.showMessageDialog(this, "Projekt aktualisiert.");
-
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Ungültige Zahleneingabe.");
-            } catch (LeereNamenSIndNichtErlaubt | UngueltigeNote | UngueltigesDatum | DoppelterName ex) {
-                JOptionPane.showMessageDialog(this, "Fehler: " + ex.getMessage());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Fehler beim Bearbeiten des Projekts: " + e.getMessage());
             }
-
         } else {
             JOptionPane.showMessageDialog(this, "Kein Projekt ausgewählt!");
         }
     }
 
+    // Projekte nach Name sortieren
     private void namesortieren(){
         ArrayList<Projekt> sortierteListeName = projektVerwaltung.NameSortieren();
         tableModel.setRowCount(0);
@@ -321,7 +427,7 @@ public class GUIProjektVerwaltung extends JFrame {
         }
         JOptionPane.showMessageDialog(this,"Nach Name sortiert");
     }
-
+    // Projekte nach Note sortieren
     private void notesortieren(){
         ArrayList<Projekt> sortierteListeNote = projektVerwaltung.NoteSortieren();
         tableModel.setRowCount(0);
@@ -330,7 +436,7 @@ public class GUIProjektVerwaltung extends JFrame {
         }
         JOptionPane.showMessageDialog(this,"Nach Note sortiert");
     }
-
+    // Projekte nach Abgabedatum sortieren
     private void abgabedatumsortieren(){
         ArrayList<Projekt> sortierteListeAbgabeDatum = projektVerwaltung.AbgabeDatumSortieren();
         tableModel.setRowCount(0);
@@ -351,7 +457,7 @@ public class GUIProjektVerwaltung extends JFrame {
         }
         tableModel.addRow(new Object[]{p.getProjektname(), p.getNote(), p.getAbgabedatum(), studenten.toString()});
     }
-
+    // Projekt suchen und in Tabelle anzeigen
     private void projektsuchen(){
         String Ziel = JOptionPane.showInputDialog("Projektname:");
         ArrayList<Projekt> suchListe = projektVerwaltung.NamenSuche(Ziel);
@@ -365,7 +471,7 @@ public class GUIProjektVerwaltung extends JFrame {
         }
         JOptionPane.showMessageDialog(this,"Gewünschte Namen");
     }
-
+    // Nach Note suchen und anzeigen
     private void notesuchen(){
         Integer Ziel = Integer.valueOf(JOptionPane.showInputDialog("Projektnote:"));
         ArrayList<Projekt> suchListe = projektVerwaltung.NoteSuche(Ziel);
@@ -379,30 +485,26 @@ public class GUIProjektVerwaltung extends JFrame {
         }
         JOptionPane.showMessageDialog(this,"Gewünschte Note");
     }
-
+    // Tabelle mit allen Projekten füllen und anzeigen
     private void anzeigen(){
         tableModel.setRowCount(0);
         for(Projekt p : projektVerwaltung.getAlle()){
             ausgabeTabelle(p);
         }
     }
-
+    // Projekt aus der Verwaltung löschen mit Passwortabfrage
     private void projektloeschen(){
         int selectedRow = table.getSelectedRow();
 
         if(selectedRow >= 0){
 
-            // Projektname aus der Spalte holen
             String projektname = (String) table.getValueAt(selectedRow, 0);
 
-            //Passwortabfrage
             String eingabe = JOptionPane.showInputDialog(this,"Bitte Passwort eingeben!");
 
            if(eingabe != null && passwort.equals(eingabe)){
-               //Projekt in der Verwaltung löschen
                projektVerwaltung.Projektloeschen(projektname);
 
-               //Zeile aus der Tabelle entfernen
                tableModel.removeRow(selectedRow);
 
                JOptionPane.showMessageDialog(this,"Projekt " + projektname + " wurde gelöscht.");

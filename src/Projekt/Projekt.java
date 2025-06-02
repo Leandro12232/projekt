@@ -1,14 +1,15 @@
 package Projekt;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Projekt {
+    // Attribute eines Projekts
     private String Projektname;
     private int Abgabedatum;
     private int Note;
-    private ArrayList<Student> SchuelerListe;
+    private ArrayList<Student> SchuelerListe;  // Liste der Schüler, die am Projekt beteiligt sind
 
+    // Standardkonstruktor: setzt Standardwerte (leerer Name, Note 0, Datum 0, keine Schüler)
     public Projekt() {
         this.Projektname = "";
         this.Note = 0;
@@ -16,12 +17,15 @@ public class Projekt {
         this.SchuelerListe = null;
     }
 
+    // Konstruktor mit Parametern, um ein Projekt mit Daten zu erstellen
     public Projekt(String projektname, int note, int abgabedatum, ArrayList<Student> schuelerliste) {
         Projektname = projektname;
         Note = note;
         Abgabedatum = abgabedatum;
         SchuelerListe = schuelerliste;
     }
+
+    // Getter-Methoden für die Attribute
 
     public String getProjektname() {
         return Projektname;
@@ -31,7 +35,6 @@ public class Projekt {
         return Abgabedatum;
     }
 
-
     public int getNote() {
         return Note;
     }
@@ -39,6 +42,8 @@ public class Projekt {
     public ArrayList<Student> getSchuelerListe() {
         return SchuelerListe;
     }
+
+    // Setter-Methoden, um die Attribute zu ändern
 
     public void setNote(int note) {
         Note = note;
@@ -52,11 +57,7 @@ public class Projekt {
         SchuelerListe = schuelerListe;
     }
 
-
     public void setProjektname(String projektname) {
         Projektname = projektname;
     }
-
-
-
 }
